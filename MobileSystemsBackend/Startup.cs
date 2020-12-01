@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using MobileSystemsBackend.Infrastructure.Migrations;
 
 namespace MobileSystemsBackend
 {
@@ -26,15 +21,19 @@ namespace MobileSystemsBackend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddFluentMigratorCore()
+                .AddLogging(c => c.AddFluentMigratorConsole())
+                .ConfigureRunner(rb => rb
+                    .AddPostgres()
+                    .WithGlobalConnectionString(Configuration.GetValue<string>("PostgresConnectionString"))
+                    .ScanIn(typeof(AddCoordinateTable).Assembly).For.Migrations()
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 
@@ -43,6 +42,10 @@ namespace MobileSystemsBackend
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            Database.EnsureDatabase(Configuration.GetValue<string>("PostgresConnectionStringNoDb"), "mobilesystems");
+
+            app.Migrate();
         }
     }
 }
