@@ -11,7 +11,7 @@ namespace MobileSystemsBackend.Infrastructure.Migrations
             using var scope = app.ApplicationServices.CreateScope();
             var runner = scope.ServiceProvider.GetService<IMigrationRunner>();
             runner.ListMigrations();
-            runner.MigrateUp(202012011607);
+            runner.MigrateUp(202012030000);
             return app;
         }
     }

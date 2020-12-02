@@ -30,7 +30,9 @@ namespace MobileSystemsBackend
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
                     .WithGlobalConnectionString(connectionString)
-                    .ScanIn(typeof(AddCoordinateTable).Assembly).For.Migrations()
+                    // .ScanIn(typeof(AddCoordinateTable).Assembly).For.Migrations()
+                    // .ScanIn(typeof(AddTripTable).Assembly).For.Migrations()
+                    .ScanIn(typeof(EditCoordinateTableAddTripId).Assembly).For.Migrations()
                 );
             services.AddScoped<ICoordinateRepository>(x =>
                 ActivatorUtilities.CreateInstance<CoordinateRepository>(x, connectionString));

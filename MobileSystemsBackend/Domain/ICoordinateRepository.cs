@@ -7,5 +7,6 @@ namespace MobileSystemsBackend.Domain
         int Create(Coordinate coordinate);
         int CreateBulk(List<Coordinate> coordinates);
         List<Coordinate> ReadAll();
+        List<Coordinate> ReadAll(int tripId);
     }
 }

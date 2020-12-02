@@ -7,7 +7,6 @@ namespace MobileSystemsBackend.Infrastructure.Migrations
     {
         public static void EnsureDatabase(string connectionString, string name)
         {
-            Console.WriteLine(connectionString);
             using var conn = new NpgsqlConnection(connectionString);
             conn.Open();
 
