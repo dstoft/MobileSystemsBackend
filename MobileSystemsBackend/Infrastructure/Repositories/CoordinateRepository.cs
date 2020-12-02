@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using MobileSystemsBackend.Domain;
 using Npgsql;
@@ -23,15 +22,29 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
                 conn.Open();
                 using var cmd = BuildSqlCommand(coordinate);
                 cmd.Connection = conn;
-                returnValue = cmd.ExecuteNonQuery();
+                returnValue += cmd.ExecuteNonQuery();
             }
 
             return returnValue;
         }
 
-        public List<int> CreateBulk(List<Coordinate> coordinate)
+        public int CreateBulk(List<Coordinate> coordinates)
         {
-            throw new NotImplementedException();
+            var cmds = new List<NpgsqlCommand>();
+            foreach (var coordinate in coordinates) cmds.Add(BuildSqlCommand(coordinate));
+
+            var returnValue = -cmds.Count;
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                cmds.ForEach(cmd =>
+                {
+                    cmd.Connection = conn;
+                    returnValue += cmd.ExecuteNonQuery();
+                });
+            }
+
+            return returnValue;
         }
 
         public List<Coordinate> ReadAll()

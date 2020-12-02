@@ -5,7 +5,7 @@ namespace MobileSystemsBackend.Domain
     public interface ICoordinateRepository
     {
         int Create(Coordinate coordinate);
-        List<int> CreateBulk(List<Coordinate> coordinate);
+        int CreateBulk(List<Coordinate> coordinates);
         List<Coordinate> ReadAll();
     }
 }

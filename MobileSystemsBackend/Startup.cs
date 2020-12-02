@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MobileSystemsBackend.Domain;
 using MobileSystemsBackend.Infrastructure.Migrations;
+using MobileSystemsBackend.Infrastructure.Repositories;
 
 namespace MobileSystemsBackend
 {
@@ -20,14 +22,18 @@ namespace MobileSystemsBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetValue<string>("PostgresConnectionString");
+
             services.AddControllers();
             services.AddFluentMigratorCore()
                 .AddLogging(c => c.AddFluentMigratorConsole())
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
-                    .WithGlobalConnectionString(Configuration.GetValue<string>("PostgresConnectionString"))
+                    .WithGlobalConnectionString(connectionString)
                     .ScanIn(typeof(AddCoordinateTable).Assembly).For.Migrations()
                 );
+            services.AddScoped<ICoordinateRepository>(x =>
+                ActivatorUtilities.CreateInstance<CoordinateRepository>(x, connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
