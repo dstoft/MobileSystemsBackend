@@ -1,4 +1,5 @@
-﻿using MobileSystemsBackend.Domain;
+﻿using System.Collections.Generic;
+using MobileSystemsBackend.Domain;
 using Npgsql;
 
 namespace MobileSystemsBackend.Infrastructure.Repositories
@@ -40,11 +41,29 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
             return new Trip {Id = reader.GetInt32(0), Time = reader.GetInt64(1)};
         }
 
+        public List<Trip> List()
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+            using var cmd =
+                new NpgsqlCommand(
+                    $"SELECT * FROM {_table}", conn);
+            using var reader = cmd.ExecuteReader();
+            
+            var returnList = new List<Trip>();
+            while (reader.Read())
+            {
+                returnList.Add(new Trip {Id = reader.GetInt32(0), Time = reader.GetInt64(1)});
+            }
+
+            return returnList;
+        }
+
         private NpgsqlCommand BuildInsertSqlCommand(Trip trip)
         {
             var cmd =
                 new NpgsqlCommand(
-                    $"INSERT INTO {_table}(time) VALUES (@time)");
+                    $"INSERT INTO {_table}(\"Time\") VALUES (@time)");
             cmd.Parameters.AddWithValue("time", trip.Time);
             return cmd;
         }

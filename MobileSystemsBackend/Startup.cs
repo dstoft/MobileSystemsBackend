@@ -24,18 +24,24 @@ namespace MobileSystemsBackend
         {
             var connectionString = Configuration.GetValue<string>("PostgresConnectionString");
 
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
             services.AddControllers();
             services.AddFluentMigratorCore()
                 .AddLogging(c => c.AddFluentMigratorConsole())
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
                     .WithGlobalConnectionString(connectionString)
-                    // .ScanIn(typeof(AddCoordinateTable).Assembly).For.Migrations()
-                    // .ScanIn(typeof(AddTripTable).Assembly).For.Migrations()
-                    .ScanIn(typeof(EditCoordinateTableAddTripId).Assembly).For.Migrations()
+                    .ScanIn(typeof(AddCoordinateTable).Assembly).For.Migrations()
                 );
             services.AddScoped<ICoordinateRepository>(x =>
                 ActivatorUtilities.CreateInstance<CoordinateRepository>(x, connectionString));
+            services.AddScoped<ITripRepository>(x =>
+                ActivatorUtilities.CreateInstance<TripRepository>(x, connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +49,8 @@ namespace MobileSystemsBackend
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
+            app.UseCors("MyPolicy");
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

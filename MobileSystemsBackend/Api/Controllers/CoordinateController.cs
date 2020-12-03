@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MobileSystemsBackend.Api.InputModel;
+using MobileSystemsBackend.Api.Mappers;
 using MobileSystemsBackend.Api.OutputModel;
 using MobileSystemsBackend.Domain;
 
 namespace MobileSystemsBackend.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/Trip/{tripId}/[controller]")]
     public class CoordinateController : ControllerBase
     {
         private readonly ICoordinateRepository _coordinateRepository;
@@ -19,40 +20,30 @@ namespace MobileSystemsBackend.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ReadCoordinateModel>> List()
+        public ActionResult<List<ReadCoordinateModel>> List(int tripId)
         {
-            var coordinateList = _coordinateRepository.ReadAll();
+            var coordinateList = _coordinateRepository.ReadAll(tripId);
             var returnList = new List<ReadCoordinateModel>();
-            coordinateList.ForEach(coordinate => returnList.Add(new ReadCoordinateModel
-            {
-                Id = coordinate.Id,
-                EpochTime = coordinate.Time,
-                Latitude = coordinate.Latitude,
-                Longitude = coordinate.Longitude
-            }));
-//            var returnList = new List<ReadCoordinateModel>
-//            {
-//                new ReadCoordinateModel {EpochTime = 313, Id = Guid.NewGuid(), Latitude = 123.22, Longitude = 32.13},
-//                new ReadCoordinateModel {EpochTime = 314, Id = Guid.NewGuid(), Latitude = 124.22, Longitude = 42.13}
-//            };
+            coordinateList.ForEach(coordinate => returnList.Add(CoordinateMapper.MapFromDomain(coordinate)));
             return Ok(returnList);
         }
 
-        [HttpPost]
-        public ActionResult<Guid> Create([FromBody] CreateCoordinateModel createCoordinateModel)
-        {
-            Console.WriteLine(
-                $"Created coordinate: {createCoordinateModel.time}, {createCoordinateModel.latitude};{createCoordinateModel.longitude}");
-            return Created("", Guid.NewGuid());
-        }
+        // [HttpPost]
+        // public ActionResult<Guid> Create([FromBody] CreateCoordinateModel createCoordinateModel, [FromRoute] int tripId)
+        // {
+        //     Console.WriteLine(
+        //         $"Created coordinate: {createCoordinateModel.time}, {createCoordinateModel.latitude};{createCoordinateModel.longitude}");
+        //     return Created("", Guid.NewGuid());
+        // }
 
         [HttpPost]
         [Route("bulk")]
-        public ActionResult<List<Guid>> CreateBulk([FromBody] List<CreateCoordinateModel> createCoordinateModels)
+        public ActionResult<List<int>> CreateBulk([FromBody] List<CreateCoordinateModel> createCoordinateModels, [FromRoute] int tripId)
         {
-            createCoordinateModels.ForEach(model =>
-                Console.WriteLine($"Created bulk coordinate: {model.time}, {model.latitude};{model.longitude}"));
-            return Created("", Guid.NewGuid());
+            var coordinateList = new List<Coordinate>();
+            createCoordinateModels.ForEach(model => coordinateList.Add(CoordinateMapper.MapToDomain(model, tripId)));
+            _coordinateRepository.CreateBulk(coordinateList);
+            return Created("", 0);
         }
     }
 }

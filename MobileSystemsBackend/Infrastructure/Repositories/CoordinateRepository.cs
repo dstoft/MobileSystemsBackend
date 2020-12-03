@@ -80,7 +80,7 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
                 conn.Open();
                 using var cmd =
                     new NpgsqlCommand(
-                        $"SELECT * FROM {_table} WHERE TripId=@tripId", conn);
+                        $"SELECT * FROM {_table} WHERE \"TripId\"=@tripId", conn);
                 cmd.Parameters.AddWithValue("tripId", tripId);
                 using var reader = cmd.ExecuteReader();
 
@@ -102,7 +102,7 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
         {
             var cmd =
                 new NpgsqlCommand(
-                    $"INSERT INTO {_table}(time, latitude, longitude, TripId) VALUES (@time, @latitude, @longitude, @tripId)");
+                    $"INSERT INTO {_table}(\"Time\", \"Latitude\", \"Longitude\", \"TripId\") VALUES (@time, @latitude, @longitude, @tripId)");
             cmd.Parameters.AddWithValue("time", coordinate.Time);
             cmd.Parameters.AddWithValue("latitude", coordinate.Latitude);
             cmd.Parameters.AddWithValue("longitude", coordinate.Longitude);
