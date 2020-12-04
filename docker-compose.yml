@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  ms-postgres:
+    image: postgres
+    container_name: ms-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: userPwd
+  
+  ms-backend:
+    image: dstoft/mobile-systems-backend
+    container_name: ms-backend
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - ms-postgres

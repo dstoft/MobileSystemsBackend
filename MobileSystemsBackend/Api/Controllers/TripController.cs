@@ -31,8 +31,8 @@ namespace MobileSystemsBackend.Api.Controllers
         public ActionResult<int> Create([FromBody] CreateTripModel createTripModel)
         {
             var trip = TripMapper.MapToDomain(createTripModel);
-            _tripRepository.Create(trip);
-            return Created("", 1);
+            var tripId = _tripRepository.Create(trip);
+            return Created("", tripId);
         }
     }
 }

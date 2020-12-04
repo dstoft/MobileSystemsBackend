@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MobileSystemsBackend.Domain;
 using Npgsql;
 
@@ -21,9 +22,8 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
                 conn.Open();
                 using var cmd = BuildInsertSqlCommand(trip);
                 cmd.Connection = conn;
-                returnValue += cmd.ExecuteNonQuery();
+                returnValue = Convert.ToInt32((long) cmd.ExecuteScalar());
             }
-
             return returnValue;
         }
 
@@ -63,7 +63,7 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
         {
             var cmd =
                 new NpgsqlCommand(
-                    $"INSERT INTO {_table}(\"Time\") VALUES (@time)");
+                    $"INSERT INTO {_table}(\"Time\") VALUES (@time) RETURNING \"Id\"");
             cmd.Parameters.AddWithValue("time", trip.Time);
             return cmd;
         }
