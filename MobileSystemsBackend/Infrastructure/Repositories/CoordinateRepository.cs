@@ -55,7 +55,7 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
                 conn.Open();
                 using var cmd =
                     new NpgsqlCommand(
-                        $"SELECT * FROM {_table}", conn);
+                        $"SELECT * FROM {_table} ORDER BY \"Time\" ASC", conn);
                 using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -80,7 +80,7 @@ namespace MobileSystemsBackend.Infrastructure.Repositories
                 conn.Open();
                 using var cmd =
                     new NpgsqlCommand(
-                        $"SELECT * FROM {_table} WHERE \"TripId\"=@tripId", conn);
+                        $"SELECT * FROM {_table} WHERE \"TripId\"=@tripId ORDER BY \"Time\" ASC", conn);
                 cmd.Parameters.AddWithValue("tripId", tripId);
                 using var reader = cmd.ExecuteReader();
 

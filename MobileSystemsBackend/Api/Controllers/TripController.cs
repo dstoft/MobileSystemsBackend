@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MobileSystemsBackend.Api.InputModel;
 using MobileSystemsBackend.Api.Mappers;
 using MobileSystemsBackend.Api.OutputModel;
+using MobileSystemsBackend.Application;
 using MobileSystemsBackend.Domain;
 
 namespace MobileSystemsBackend.Api.Controllers
@@ -12,10 +13,12 @@ namespace MobileSystemsBackend.Api.Controllers
     public class TripController : ControllerBase
     {
         private readonly ITripRepository _tripRepository;
+        private readonly ITripStatsBuilder _tripStatsBuilder;
 
-        public TripController(ITripRepository tripRepository)
+        public TripController(ITripRepository tripRepository, ITripStatsBuilder tripStatsBuilder)
         {
             _tripRepository = tripRepository;
+            _tripStatsBuilder = tripStatsBuilder;
         }
 
         [HttpGet]
@@ -33,6 +36,12 @@ namespace MobileSystemsBackend.Api.Controllers
             var trip = TripMapper.MapToDomain(createTripModel);
             var tripId = _tripRepository.Create(trip);
             return Created("", tripId);
+        }
+
+        [HttpGet("{tripId}/stats")]
+        public ActionResult<ReadTripStatsModel> Stats(int tripId)
+        {
+            return TripStatsMapper.MapFromDomain(_tripStatsBuilder.Build(tripId));
         }
     }
 }

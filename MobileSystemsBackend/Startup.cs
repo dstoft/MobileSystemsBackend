@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MobileSystemsBackend.Application;
 using MobileSystemsBackend.Domain;
 using MobileSystemsBackend.Infrastructure.Migrations;
 using MobileSystemsBackend.Infrastructure.Repositories;
@@ -42,6 +43,8 @@ namespace MobileSystemsBackend
                 ActivatorUtilities.CreateInstance<CoordinateRepository>(x, connectionString));
             services.AddScoped<ITripRepository>(x =>
                 ActivatorUtilities.CreateInstance<TripRepository>(x, connectionString));
+            services.AddScoped<ICoordinateDistanceCalculator, CoordinateDistanceCalculator>();
+            services.AddScoped<ITripStatsBuilder, TripStatsBuilder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
