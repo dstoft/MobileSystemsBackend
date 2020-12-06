@@ -34,13 +34,15 @@ namespace MobileSystemsBackend.Application
             }
 
             var avgSpeed = totalMeters / totalSeconds;
+            var avgSecondsPerCoordinate = totalSeconds / coordinateCount;
             return new TripStats
             {
                 TripId = tripId,
                 TotalSeconds = totalSeconds,
                 CoordinateCount = coordinateCount,
                 TotalMeters = totalMeters,
-                AvgSpeed = avgSpeed
+                AvgSpeed = avgSpeed,
+                AvgSecondsPerCoordinate = avgSecondsPerCoordinate
             };
         }
     }

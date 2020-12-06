@@ -7,5 +7,6 @@
         public int CoordinateCount { get; set; }
         public double TotalMeters { get; set; }
         public double AvgSpeed { get; set; }
+        public double AvgSecondsPerCoordinate { get; set; }
     }
 }

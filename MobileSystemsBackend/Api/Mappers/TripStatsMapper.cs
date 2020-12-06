@@ -13,7 +13,8 @@ namespace MobileSystemsBackend.Api.Mappers
                 TotalSeconds = tripStats.TotalSeconds,
                 CoordinateCount = tripStats.CoordinateCount,
                 TotalMeters = tripStats.TotalMeters,
-                AvgSpeed = tripStats.AvgSpeed
+                AvgSpeed = tripStats.AvgSpeed,
+                AvgSecondsPerCoordinate = tripStats.AvgSecondsPerCoordinate
             };
         }
     }
